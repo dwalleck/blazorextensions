@@ -3,6 +3,7 @@
 	"displayName": "blazorextensions",
 	"description": "Adds blazor templates to context menus",
 	"version": "0.0.1",
+	"publisher": "dwalleck",
 	"engines": {
 		"vscode": "^1.48.0"
 	},
@@ -10,16 +11,25 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onCommand:blazorextensions.helloWorld"
+		"onLanguage:csharp",
+		"onCommand:blazorextensions.createComponent"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
 		"commands": [
 			{
-				"command": "blazorextensions.helloWorld",
-				"title": "Hello World"
+				"command": "blazorextensions.createComponent",
+				"title": "New Blazor Component"
 			}
-		]
+		],
+		"menus": {
+			"explorer/context": [
+				{
+					"group": "navigation@-1",
+					"command": "blazorextensions.createComponent"
+				}
+			]
+		}
 	},
 	"scripts": {
 		"vscode:prepublish": "npm run compile",
