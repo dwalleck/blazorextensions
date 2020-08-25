@@ -4,34 +4,31 @@ import * as fs from 'fs';
 
 
 export function activate(context: vscode.ExtensionContext) {
-	let disposable = vscode.commands.registerCommand('blazorextensions.helloWorld', () => {
-		vscode.window.showInformationMessage('Hello World from blazorextensions!');
-	});
-	context.subscriptions.push(vscode.commands.registerCommand('blazorextensions.createComponent', createComponent));
-
-	context.subscriptions.push(disposable);
-	
+	context.subscriptions.push(vscode.commands.registerCommand(
+		'blazorextensions.createComponent',
+		createComponent
+	));
 }
 
 function createComponent(args: any) {
     promptAndSave(args, 'component');
 }
 
-function promptAndSave(args: any, templatetype: string) {
+function promptAndSave(args: any, templateType: string) {
     if (args === null) {
         args = { _fsPath: vscode.workspace.rootPath };
     }
     let incomingpath: string = args._fsPath || args.fsPath || args.path;
 
-    vscode.window.showInputBox({ ignoreFocusOut: true, prompt: 'Please enter filename', value: 'New' + templatetype })
-        .then(async newfilename => {
-			if (typeof newfilename === 'undefined') {
+    vscode.window.showInputBox({ ignoreFocusOut: true, prompt: 'Enter the component name', value: 'New' + templateType })
+        .then(async newFileName => {
+			if (typeof newFileName === 'undefined') {
 				return;
 			}
 
-            let newfilepath = incomingpath + path.sep + newfilename + '.razor';
+            let newFilePath = incomingpath + path.sep + newFileName + '.razor';
 
-            if (fs.existsSync(newfilepath)) {
+            if (fs.existsSync(newFilePath)) {
                 vscode.window.showErrorMessage("File already exists");
                 return;
             }
@@ -40,7 +37,7 @@ function promptAndSave(args: any, templatetype: string) {
             // const namespace = await namespaceDetector.getNamespace();
             // const typename = path.basename(newfilepath, '.cs');
 
-            openTemplateAndSaveNewFile(templatetype, "", newfilename, newfilepath);
+            openTemplateAndSaveNewFile(templateType, "", newFileName, newFilePath);
         }, errOnInput => {
             console.error('Error on input', errOnInput);
 
@@ -53,7 +50,7 @@ function openTemplateAndSaveNewFile(type: string, namespace: string, filename: s
     const extension = vscode.extensions.getExtension('dwalleck.blazorextensions');
 
     if (!extension) {
-        vscode.window.showErrorMessage('Weird, but the extension you are currently using could not be found');
+        vscode.window.showErrorMessage('The current extension cannot be found.');
         return;
     }
     const templateFilePath = path.join(extension.extensionPath, 'templates', templatefileName);
@@ -71,9 +68,7 @@ function openTemplateAndSaveNewFile(type: string, namespace: string, filename: s
             });
         }, errTryingToCreate => {
             const errorMessage = `Error trying to create file '${originalfilepath}' from template '${templatefileName}'`;
-
             console.error(errorMessage, errTryingToCreate);
-
             vscode.window.showErrorMessage(errorMessage);
         });
 }
